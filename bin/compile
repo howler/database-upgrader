@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+HEROKU_APP_NAME=$(cat "$ENV_DIR/HEROKU_APP_NAME")
+
+HEROKU_APP_JSON=$($BUILD_DIR/.heroku/bin/heroku addons --app $HEROKU_APP_NAME --json)
+POSTGRES_ADD_ON=$(echo $HEROKU_APP_JSON | ruby -e "require 'json'; puts JSON.parse(STDIN.each_line.to_a.join).find { |a| a['addon_service']['name'] == 'heroku-postgresql' }['name']")
+POSTGRES_PLAN=$(echo $HEROKU_APP_JSON | ruby -e "require 'json'; puts JSON.parse(STDIN.each_line.to_a.join).find { |a| a['addon_service']['name'] == 'heroku-postgresql' }['plan']['name']")
+
+if [ "$POSTGRES_PLAN" = "heroku-postgresql:essentials-0" ]
+then
+  $BUILD_DIR/.heroku/bin/heroku addons:upgrade $POSTGRES_ADD_ON essential-1 --app $HEROKU_APP_NAME
+fi
