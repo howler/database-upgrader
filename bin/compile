@@ -6,6 +6,7 @@ CACHE_DIR=$2
 ENV_DIR=$3
 
 HEROKU_APP_NAME=$(cat "$ENV_DIR/HEROKU_APP_NAME")
+export HEROKU_API_KEY=$(cat "$ENV_DIR/HEROKU_API_TOKEN")
 
 HEROKU_APP_JSON=$($BUILD_DIR/.heroku/bin/heroku addons --app $HEROKU_APP_NAME --json)
 POSTGRES_ADD_ON=$(echo $HEROKU_APP_JSON | ruby -e "require 'json'; puts JSON.parse(STDIN.each_line.to_a.join).find { |a| a['addon_service']['name'] == 'heroku-postgresql' }['name']")
