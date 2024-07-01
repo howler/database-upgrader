@@ -15,5 +15,4 @@ POSTGRES_PLAN=$(echo $HEROKU_APP_JSON | ruby -e "require 'json'; puts JSON.parse
 if [ "$POSTGRES_PLAN" = "heroku-postgresql:essential-0" ]
 then
   $BUILD_DIR/.heroku/bin/heroku addons:upgrade $POSTGRES_ADD_ON essential-1 --app $HEROKU_APP_NAME
-  $BUILD_DIR/.heroku/bin/heroku pg:wait --app $HEROKU_APP_NAME
 fi
